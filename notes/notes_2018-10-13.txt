@@ -1,0 +1,107 @@
+# Notes from 2018-10-13
+
+foo{
+	bar: 2,
+	baz: 5
+}
+
+foo bar:2 baz:5
+foo(bar:2, baz:5)
+foo bar:(2) baz:(5)
+
+foo bar:(NamedTuple(fiz: 2, buz: 3, saz: 4))
+
+sort list:xs
+
+!= or /=
+
+contains list e
+list `contains` e == True => e is in list
+
+`infix`
+<!> <==> ~()~
+
+func
+function
+
+contains :: Argument -> Argument
+
+123.0
+
+sort :: (Orderable elem)
+
+
+head :: list:[a] returns Maybe a
+	list !! 0 // list[0]
+	list !! -1 // error
+	list !! len(list) // error
+
+
+
+standard.array (head, length)
+standard.list (head, length)
+
+
+contains :: (Equatable a) list:[a], element:a returns Boolean
+	any (\x -> x == element) list
+
+
+Alles
+	- snake_case
+	- = is equal
+	- Immutable
+	- Tuples, (must be named)
+
+Type classes
+	- Interfaces
+
+Types
+	- Complexity
+	- Starts with capital letters
+
+Functions
+	- Starts with lower case letters
+
+Discussions
+	- What about `length`, can take varying time depending on implementation
+
+import array (Array)
+import list (List)
+
+foo :: (Equatable a) => list List<(x: Float, y: Float)>, arr Array<Integer>, tup Tuple(x: a, y: a) returns baz
+
+	let first = is_origo(point:arr.head, bool: 1=1)
+	let first = list.head
+
+	let first = array.head arr
+	let first = list.head list
+
+	Array.head
+	:Color.yellow:
+	:Enum.name:
+
+is_germany :: flag:List<Color> returns Boolean
+	@ flag.length = 3
+	! flag        = [Color.black, Color.yellow, Color.red]
+
+
+foo_function ::
+	// Get user input
+	let input = ...
+	let list  = ...
+	if input >= 0
+		list[input]
+	else
+		0
+
+at :: list:List<a>, index:Int returns a
+	@ index >= 0
+	! index < list.length, error "Index out of bounds!"
+	return list[index]
+
+import point (Point)
+
+is_origo :: point:Point, bool:Boolean
+
+
+zip xs ys == [(x:x[0], y:y[0]), ...]
