@@ -15,8 +15,17 @@ machine code.
 
 ## Language features
 
-- Named function call parameters
-- Fomal constraints
+- Named function call parameters (under investigation)
+- Compile time fomal constraints (nice!)
+- Runtime constraints (nice!)
+- Type classes
+- Atoms
+- Sane defaults (=, and, not, or)
+- Small keyword space
+- must : Pattern matching, lol yah
+- Lazy standard? prehaps :+1:
+- Some form of IO, `do`, monad? chezksjobb
+
 
 ```galvin
 contains(collection:xs, element:x)
