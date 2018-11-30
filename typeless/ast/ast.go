@@ -2,6 +2,10 @@
 
 package ast
 
+import (
+	"github.com/lapsang-boys/galvin/typeless/selector"
+)
+
 // Interfaces.
 
 type TypelessNode interface {
@@ -13,8 +17,91 @@ type NilNode struct {}
 var nilInstance = &NilNode{}
 
 // All types implement TypelessNode.
+func (n Body) TypelessNode() *Node { return n.Node }
+func (n File) TypelessNode() *Node { return n.Node }
+func (n FunctionAbstraction) TypelessNode() *Node { return n.Node }
+func (n FunctionApplication) TypelessNode() *Node { return n.Node }
+func (n Identifier) TypelessNode() *Node { return n.Node }
+func (n Literal) TypelessNode() *Node { return n.Node }
 func (NilNode) TypelessNode() *Node { return nil }
 
+type Expression interface {
+	TypelessNode
+	expressionNode()
+}
+
+// expressionNode() ensures that only the following types can be
+// assigned to Expression.
+//
+func (FunctionAbstraction) expressionNode() {}
+func (FunctionApplication) expressionNode() {}
+func (Identifier) expressionNode() {}
+func (Literal) expressionNode() {}
+func (NilNode) expressionNode() {}
+
 // Types.
+
+type Body struct {
+	*Node
+}
+
+func (n Body) Expression() Expression {
+	return ToTypelessNode(n.Child(selector.Expression)).(Expression)
+}
+
+type File struct {
+	*Node
+}
+
+func (n File) Expression() []Expression {
+	nodes := n.Children(selector.Expression)
+	var ret = make([]Expression, 0, len(nodes))
+	for _, node := range nodes {
+		ret = append(ret, ToTypelessNode(node).(Expression))
+	}
+	return ret
+}
+
+type FunctionAbstraction struct {
+	*Node
+}
+
+func (n FunctionAbstraction) Parameters() []Identifier {
+	nodes := n.Children(selector.Identifier)
+	var ret = make([]Identifier, 0, len(nodes))
+	for _, node := range nodes {
+		ret = append(ret, Identifier{node})
+	}
+	return ret
+}
+
+func (n FunctionAbstraction) Body() Body {
+	return Body{n.Child(selector.Body)}
+}
+
+type FunctionApplication struct {
+	*Node
+}
+
+func (n FunctionApplication) FunctionName() FunctionAbstraction {
+	return FunctionAbstraction{n.Child(selector.FunctionAbstraction)}
+}
+
+func (n FunctionApplication) Arguments() []Expression {
+	nodes := n.Child(selector.FunctionAbstraction).NextAll(selector.Expression)
+	var ret = make([]Expression, 0, len(nodes))
+	for _, node := range nodes {
+		ret = append(ret, ToTypelessNode(node).(Expression))
+	}
+	return ret
+}
+
+type Identifier struct {
+	*Node
+}
+
+type Literal struct {
+	*Node
+}
 
 

@@ -3,18 +3,25 @@
 package selector
 
 import (
-	"github.com/llir/ll"
+	"github.com/lapsang-boys/galvin/typeless"
 )
 
-type Selector func (nt ll.NodeType) bool
+type Selector func (nt typeless.NodeType) bool
 
 var (
-	Any = func(t ll.NodeType) bool { return true }
+	Any = func(t typeless.NodeType) bool { return true }
+	Body = func(t typeless.NodeType) bool { return t == typeless.Body }
+	File = func(t typeless.NodeType) bool { return t == typeless.File }
+	FunctionAbstraction = func(t typeless.NodeType) bool { return t == typeless.FunctionAbstraction }
+	FunctionApplication = func(t typeless.NodeType) bool { return t == typeless.FunctionApplication }
+	Identifier = func(t typeless.NodeType) bool { return t == typeless.Identifier }
+	Literal = func(t typeless.NodeType) bool { return t == typeless.Literal }
+	Expression = OneOf(typeless.Expression...)
 )
 
-func OneOf(types ...ll.NodeType) Selector {
+func OneOf(types ...typeless.NodeType) Selector {
 	if len(types) == 0 {
-		return func(ll.NodeType) bool { return false }
+		return func(typeless.NodeType) bool { return false }
 	}
 	const bits = 32
 	max := 1
@@ -28,7 +35,7 @@ func OneOf(types ...ll.NodeType) Selector {
 	for _, t := range types {
 		bitarr[uint(t)/bits] |= 1 << (uint(t) % bits)
 	}
-	return func(t ll.NodeType) bool {
+	return func(t typeless.NodeType) bool {
 		i := uint(t)/bits
 		return int(i) < len(bitarr) && bitarr[i]&(1<<(uint(t)%bits)) != 0
 	}

@@ -4,14 +4,14 @@ package ast
 
 import (
 	"errors"
-	"github.com/llir/ll"
+	"github.com/lapsang-boys/galvin/typeless"
 )
 
 // Parse parses a given utf-8 content into an AST.
 func Parse(path, content string) (*Tree, error) {
-	var l ll.Lexer
+	var l typeless.Lexer
 	l.Init(content)
-	var p ll.Parser
+	var p typeless.Parser
 	b := newBuilder(path, content)
 	p.Init(b.addNode)
 	err := p.Parse(&l)
@@ -34,7 +34,7 @@ func newBuilder(path, content string) *builder {
 	}
 }
 
-func (b *builder) addNode(t ll.NodeType, offset, endoffset int) {
+func (b *builder) addNode(t typeless.NodeType, offset, endoffset int) {
 	start := len(b.stack)
 	end := start
 	for start > 0 && b.stack[start-1].offset >= offset {

@@ -4,12 +4,24 @@ package ast
 
 import (
 	"fmt"
-	"github.com/llir/ll"
+	"github.com/lapsang-boys/galvin/typeless"
 )
 
 func ToTypelessNode(n *Node) TypelessNode {
 	switch n.Type() {
-	case ll.NoType:
+	case typeless.Body:
+		return &Body{n}
+	case typeless.File:
+		return &File{n}
+	case typeless.FunctionAbstraction:
+		return &FunctionAbstraction{n}
+	case typeless.FunctionApplication:
+		return &FunctionApplication{n}
+	case typeless.Identifier:
+		return &Identifier{n}
+	case typeless.Literal:
+		return &Literal{n}
+	case typeless.NoType:
 	  return nilInstance
 	}
 	panic(fmt.Errorf("ast: unknown node type %v", n.Type()))

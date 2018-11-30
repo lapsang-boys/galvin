@@ -1,14 +1,14 @@
 language typeless(go);
 
 lang = "typeless"
-package = "github.com/llir/ll"
+package = "github.com/lapsang-boys/galvin/typeless"
 eventBased = true
 eventFields = true
 eventAST = true
 
 :: lexer
 
-identifier: /[a-zA-Z_][a-zA-Z0-9_]+/
+identifier_tok: /[a-zA-Z_][a-zA-Z0-9_]*/
 '(': /\(/
 ')': /\)/
 '[': /\[/
@@ -16,22 +16,41 @@ identifier: /[a-zA-Z_][a-zA-Z0-9_]+/
 ',': /,/
 '\\': /\\/
 '->': /->/
-'_': /_/
 intLit: /[-]?([0-9]|[1-9][0-9]+)/
-
-
-# (\x, y -> x+y)(x, y)
 
 :: parser
 
 %input File;
 
-File: Expression*;
+File -> File
+   : Expression*
+;
 
-Expression: FunctionAbstraction | FunctionApplication | Literal;
+%interface Expression;
 
-FunctionAbstraction: '(' '\\' ( (identifier separator ',')* | '_' ) '->' Expression ')';
+Expression -> Expression
+   : FunctionAbstraction
+   | FunctionApplication
+   | Literal
+   | Identifier
+;
 
-FunctionApplication: FunctionAbstraction '[' (Expression separator ',')* ']';
+FunctionAbstraction -> FunctionAbstraction
+   : '(' '\\' Parameters=(Identifier separator ',')* '->' Body ')'
+;
 
-Literal: intLit;
+Body -> Body
+   : Expression
+;
+
+FunctionApplication -> FunctionApplication
+   : FunctionName=FunctionAbstraction '[' Arguments=(Expression separator ',')* ']'
+;
+
+Literal -> Literal
+   : intLit
+;
+
+Identifier -> Identifier
+   : identifier_tok
+;

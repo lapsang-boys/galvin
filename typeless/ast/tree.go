@@ -3,8 +3,8 @@
 package ast
 
 import (
-	"github.com/llir/ll"
-	"github.com/llir/ll/selector"
+	"github.com/lapsang-boys/galvin/typeless"
+	"github.com/lapsang-boys/galvin/typeless/selector"
 	"sort"
 	"strings"
 )
@@ -39,7 +39,7 @@ func (t *Tree) Text() string {
 
 // Node is an AST node.
 type Node struct {
-	t          ll.NodeType
+	t          typeless.NodeType
 	offset     int
 	endoffset  int
 	parent     *Node
@@ -54,9 +54,9 @@ func (n *Node) IsValid() bool {
 }
 
 // Type returns
-func (n *Node) Type() ll.NodeType {
+func (n *Node) Type() typeless.NodeType {
 	if n == nil {
-		return ll.NoType
+		return typeless.NoType
 	}
 	return n.t
 }
