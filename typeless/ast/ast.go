@@ -53,7 +53,7 @@ type File struct {
 	*Node
 }
 
-func (n File) Expression() []Expression {
+func (n File) Expressions() []Expression {
 	nodes := n.Children(selector.Expression)
 	var ret = make([]Expression, 0, len(nodes))
 	for _, node := range nodes {
@@ -83,12 +83,12 @@ type FunctionApplication struct {
 	*Node
 }
 
-func (n FunctionApplication) FunctionName() FunctionAbstraction {
-	return FunctionAbstraction{n.Child(selector.FunctionAbstraction)}
+func (n FunctionApplication) Callee() Expression {
+	return ToTypelessNode(n.Child(selector.Expression)).(Expression)
 }
 
 func (n FunctionApplication) Arguments() []Expression {
-	nodes := n.Child(selector.FunctionAbstraction).NextAll(selector.Expression)
+	nodes := n.Child(selector.Expression).NextAll(selector.Expression)
 	var ret = make([]Expression, 0, len(nodes))
 	for _, node := range nodes {
 		ret = append(ret, ToTypelessNode(node).(Expression))

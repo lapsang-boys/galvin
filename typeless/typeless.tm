@@ -23,7 +23,7 @@ intLit: /[-]?([0-9]|[1-9][0-9]+)/
 %input File;
 
 File -> File
-   : Expression*
+   : Expressions=Expression*
 ;
 
 %interface Expression;
@@ -44,7 +44,7 @@ Body -> Body
 ;
 
 FunctionApplication -> FunctionApplication
-   : FunctionName=FunctionAbstraction '[' Arguments=(Expression separator ',')* ']'
+   : Callee=Expression '[' Arguments=(Expression separator ',')* ']'
 ;
 
 Literal -> Literal

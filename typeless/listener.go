@@ -12,10 +12,10 @@ type Listener func(t NodeType, offset, endoffset int)
 
 const (
 	NoType NodeType = iota
-	File  // (Expression)*
+	File  // Expressions=(Expression)*
 	FunctionAbstraction  // Parameters=(Identifier)* Body
 	Body  // Expression
-	FunctionApplication  // FunctionName=FunctionAbstraction Arguments=(Expression)*
+	FunctionApplication  // Callee=Expression Arguments=(Expression)*
 	Literal
 	Identifier
 	NodeTypeMax
@@ -63,7 +63,7 @@ var ruleNodeType = [...]NodeType{
 	0, // Expression_list_Comma_separated : Expression
 	0, // Expression_list_Comma_separated_opt : Expression_list_Comma_separated
 	0, // Expression_list_Comma_separated_opt :
-	FunctionApplication, // FunctionApplication : FunctionAbstraction '[' Expression_list_Comma_separated_opt ']'
+	FunctionApplication, // FunctionApplication : Expression '[' Expression_list_Comma_separated_opt ']'
 	Literal, // Literal : intLit
 	Identifier, // Identifier : identifier_tok
 }

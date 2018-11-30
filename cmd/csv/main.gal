@@ -1,4 +1,3 @@
-
 sys.open(path : String) : (File, (#ok|FileErr))
 
 // Assumes casual csv files.
@@ -11,25 +10,238 @@ delimeter = ','
 
 want_column = "1"
 
-(f, ok) = sys.open("file.csv")
-(column_names : lines) = f.lines
+Maybe CSV
+func parse_csv() Result CSV ErrorMessage {
+	var f File
 
-// Dynamically create struct with field names from column_names
-line_to_record = func(line: String, column_names: a) ({...}) =>
-   values, count = explode_on delimeter line
-   return to_associative_array column_names values
+	if f, err := open() {
+	}
+	if f2
 
-// records = [ {"A": a, "B": b, "C": c}, ...]
-// Solved flip with named parameters, currying in arbitrary orders(!)
-records = map lines line_to_record(column_names: column_names)
+	sys.open("file.csv") | Result f -> {
 
-is = func(x: a, y: a) =>
-   return x = y
+	}
+	(Maybe File, Maybe Error)
+	(f, err) = sys.open("file.csv")
+	f = sys.open!("file.csv")
 
-values = map records ( (record) => record[name] )
+	sys.open(path) File throws IOException
 
-:: String -> String -> [String]
-explode_on_delimiter = explode_on delimeter
+	File f = sys.open("file.csv")
 
-// Brother approved :+1:
-records = map lines (line => explode_on_delimiter line | (values, _, _) -> to_associative_array column_names values)
+	case err {
+		Error e -> return _, e
+	}
+	// res must be result
+	res.lines
+
+	res = sys.open("file.csv")
+	File f = case res {
+		Error PermissionDeniedError e -> return Error "Didn't have the master key"
+		Error FileNotFoundError e -> return Error "Didn't find the master key"
+		Error _ -> # wont handle
+		File f -> return f
+	}
+
+	f.lines = (column_names : lines)
+
+	// Dynamically create struct with field names from column_names
+	line_to_record = func(line: String, column_names: a) ({...}) => {
+		values, count = explode_on delimeter line
+		return to_associative_array column_names values
+	}
+
+	// records = [ {"A": a, "B": b, "C": c}, ...]
+	// Solved flip with named parameters, currying in arbitrary orders(!)
+	records = map lines line_to_record(column_names: column_names)
+
+	is = func(x: a, y: a) =>
+		return x = y
+
+	values = map records ( (record) => record[name] )
+
+	:: String -> String -> [String]
+	explode_on_delimiter = explode_on delimeter
+
+	// Brother approved :+1:
+	records = map lines (line => explode_on_delimiter line | (values, _, _) -> to_associative_array column_names values)
+
+
+	records = map lines (line =>
+		explode_on_delimiter line | (values, _, _)
+		-> to_associative_array column_names values)
+
+	return records
+}
+const delim = ","
+line := "foo,bar,baz"
+[]string{"foo", "bar", "baz"}
+func pred(line string) []strings {
+   return strings.Split(line, delim)
+}
+
+func (foo ) {
+   n := foo.Size()
+
+   ///
+
+   len(slice)
+}
+
+lines := f.get_lines()
+pred := func(line string) []string {
+   return explode_on_delimiter(line)
+}
+//records = map(lines, pred) | (values, count, _) -> count + to_associative_array column_names values)
+
+
+
+records = map(lines, pred) | (values, count) -> count + to_associative_array(column_names, values)
+records = (var values, count = map(lines, pred)) -> count + to_associative_array(column_names, values)
+records = (var values, count = map(lines, pred))
+	-> count + to_associative_array(column_names, values)
+	-> dump_to_terminal
+
+func(count int, values []string) int {
+   return count + to_associative_array(column_names, values)
+}(map(lines, pred))
+
+
+func(values, count = map(lines, pred)) int {
+   return count + to_associative_array(column_names, values)
+}
+
+
+func(sum = func(values, count = map(lines, pred)) int {
+   return count + to_associative_array(column_names, values)
+} int {
+   dump_to_terminal(sum)
+}
+
+(var values, count = map(lines, pred)) { var sum int = count + to_associative_array(column_names, values) { dump_to_terminal(sum) }}
+
+(var values, count = map(lines, pred)) -->
+   var sum int = count + to_associative_array(column_names, values) -->
+      dump_to_terminal(sum) -->
+         (var values, count = map(lines, pred)) -->
+            var sum int = count + to_associative_array(column_names, values) {
+               let asdf = dump_to_terminal sum
+					aosidnfs
+               ounot return oausnasd
+            }
+
+(var values, count = map(lines, pred)) -->
+   var sum int = count + to_associative_array(column_names, values) -->
+      dump_to_terminal(sum) {
+         foo bara r
+         (var values, count = map(lines, pred)) {
+            var sum int = count + to_associative_array(column_names, values) -->
+               dump_to_terminal(sum)
+         }
+         oasdnfljsadf
+         asdjf ljsadf
+         ajdsfjasdf
+      }
+
+
+(var values, count = map(lines, pred)) {
+   var sum int = count + to_associative_array(column_names, values) {
+      dump_to_terminal(sum) {
+         foo bara r
+         (var values, count = map(lines, pred)) {
+            var sum int = count + to_associative_array(column_names, values) {
+               dump_to_terminal(sum)
+            }
+         }
+         oasdnfljsadf
+         asdjf ljsadf
+         ajdsfjasdf
+      }
+   }
+}
+
+(var values, count = map(lines, pred)) {
+   var sum int = count + to_associative_array(column_names, values) {
+      dump_to_terminal(sum)
+   }
+}
+
+
+
+
+records = (var values, count = map(lines, pred)) { count + to_associative_array(column_names, values) }
+records = (var values, count = map(lines, pred)) { count + to_associative_array(column_names, values) }
+
+var x int = 42
+var x = 42
+x := 42
+x := int(42)
+
+
+records = (values, count = map(lines, pred)) {
+   count + to_associative_array(column_names, values)
+}
+
+records = (var values, count = map(lines, pred)) {
+   count + to_associative_array(column_names, values)
+}
+
+
+val values, count = map(lines, pred)
+records = count + number_of_elems(column_names, values)
+
+val values, count = map(lines, pred)
+records = count + number_of_elems(column_names, values)
+
+func number_of_elems(column_names []string, values [][]string) int {
+   return 42
+}
+
+
+func() (asdf, bar)
+
+func(asdf, bar) asdf
+
+first()
+second()
+
+val values, ok = map(lines, pred)
+records = ok and to_associative_array(column_names, values)
+
+
+records = to_associative_array(column_names, (map lines pred))
+
+
+func Map(lines []string, pred func(line string) []string) [][]string {
+   var new_elems [][]string
+   for _, line := range lines {
+      new_elems = append(new_elems, pred(line))
+   }
+   return new_elems
+}
+
+// currying
+func Map(lines []string) func(pred func(line string) []string) ([][]string, bool) {
+   foo := func(pred func(line string) []string) [][]string {
+      var new_elems [][]string
+      for _, line := range lines {
+         new_elems = append(new_elems, pred(line))
+      }
+      return new_elems
+   }
+   return foo
+}
+
+lines := []string{"foo,bar,baz", "x,y,z"}
+
+values := [][]string{
+   []string{"foo", "bar", "baz"},
+   []string{"x", "y", "y"},
+}
+
+line string
+
+var new_elems []Foo
+for _, line := range lines {
+   new_elems = append(new_elems, pred(line))
+}
