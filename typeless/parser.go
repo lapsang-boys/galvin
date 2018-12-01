@@ -42,7 +42,7 @@ const (
 	startStackSize = 256
 	noToken        = int32(UNAVAILABLE)
 	eoiToken       = int32(EOI)
-	debugSyntax = true
+	debugSyntax    = false
 )
 
 func (p *Parser) Parse(lexer *Lexer) error {

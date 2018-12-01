@@ -9,7 +9,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/lapsang-boys/galvin/typeless/ast"
+	tlast "github.com/lapsang-boys/galvin/typeless/ast"
 	"github.com/lapsang-boys/galvin/typeless/parser"
 	"github.com/pkg/errors"
 )
@@ -42,7 +42,7 @@ func main() {
 		log.Fatalf("%+v", err)
 	}
 	//pretty.Println(file)
-	if err := printer.Fprint(os.Stdin, token.NewFileSet(), file); err != nil {
+	if err := printer.Fprint(os.Stdout, token.NewFileSet(), file); err != nil {
 		log.Fatalf("%+v", err)
 	}
 }
@@ -59,12 +59,22 @@ func newTranspiler() *transpiler {
 		Type: &goast.FuncType{},
 		Body: body,
 	}
+	fmtImport := &goast.ImportSpec{
+		Path: &goast.BasicLit{Kind: token.STRING, Value: `"fmt"`},
+	}
+	importDecl := &goast.GenDecl{
+		Tok: token.IMPORT,
+		Specs: []goast.Spec{
+			fmtImport,
+		},
+	}
 	file := &goast.File{
 		Name: goast.NewIdent("main"),
 		Imports: []*goast.ImportSpec{
-			{Name: goast.NewIdent("fmt")},
+			fmtImport,
 		},
 		Decls: []goast.Decl{
+			importDecl,
 			mainFunc,
 		},
 	}
@@ -74,7 +84,7 @@ func newTranspiler() *transpiler {
 	}
 }
 
-func (t *transpiler) transpile(tlFile *ast.File) (*goast.File, error) {
+func (t *transpiler) transpile(tlFile *tlast.File) (*goast.File, error) {
 	for _, tlExpr := range tlFile.Expressions() {
 		expr, err := t.transpileExpr(tlExpr)
 		if err != nil {
@@ -98,11 +108,48 @@ func (t *transpiler) transpile(tlFile *ast.File) (*goast.File, error) {
 	return t.file, nil
 }
 
-func (t *transpiler) transpileExpr(tlExpr ast.Expression) (goast.Expr, error) {
+func (t *transpiler) transpileExpr(tlExpr tlast.Expression) (goast.Expr, error) {
 	switch tlExpr := tlExpr.(type) {
-	case *ast.Literal:
+	case *tlast.Literal:
 		// Correct by grammar.
 		return &goast.BasicLit{Kind: token.INT, Value: tlExpr.Text()}, nil
+	case *tlast.FunctionAbstraction:
+		params := tlExpr.Parameters()
+		body, err := t.transpileExpr(tlExpr.Body().Expression())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		paramNames := make([]*goast.Ident, len(params))
+		for i, param := range params {
+			paramNames[i] = goast.NewIdent(param.Text())
+		}
+		emptyInterfaceType := &goast.InterfaceType{
+			Methods: &goast.FieldList{},
+		}
+		goParams := &goast.FieldList{
+			List: []*goast.Field{
+				{
+					Names: paramNames,
+					Type:  emptyInterfaceType,
+				},
+			},
+		}
+		goResult := &goast.FieldList{
+			List: []*goast.Field{
+				{
+					Type: emptyInterfaceType,
+				},
+			},
+		}
+		return &goast.FuncLit{
+			Type: &goast.FuncType{
+				Params:  goParams,
+				Results: goResult,
+			},
+			Body: &goast.BlockStmt{
+				List: []goast.Stmt{&goast.ReturnStmt{Results: []goast.Expr{body}}},
+			},
+		}, nil
 	default:
 		panic(fmt.Errorf("support for expression %T not yet implemented", tlExpr))
 	}
