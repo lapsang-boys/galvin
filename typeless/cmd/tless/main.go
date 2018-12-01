@@ -1,25 +1,49 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/lapsang-boys/galvin/typeless/ast"
 )
 
 func main() {
-	tree, err := ParseFile("foo.tless")
-	if err != nil {
-		log.Fatalf("%+v", err)
+	// tree, err := ParseFile("foo.tless")
+	// if err != nil {
+	// 	log.Fatalf("%+v", err)
+	// }
+	s := bufio.NewScanner(os.Stdin)
+	fmt.Print("> ")
+	for s.Scan() {
+		line := s.Text()
+		file, err := ParseString("", line)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		interpret(file)
+		fmt.Print("> ")
 	}
-	fmt.Printf("%#v\n", tree)
+	if err := s.Err(); err != nil {
+		log.Fatalln(err)
+	}
+	// fmt.Printf("%#v\n", tree)
 
-	interpret(tree)
+	// interpret(tree)
 
-	fmt.Println(tree.Text())
+	// fmt.Println(tree.Text())
 }
 
 func interpret(f *ast.File) {
+	defer func() {
+		msg := recover()
+		if msg != nil {
+			fmt.Println(msg)
+		}
+	}()
+
 	empty := ClosureEnvironment{
 		i2x: make(map[string]ast.Expression),
 	}
