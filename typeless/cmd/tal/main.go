@@ -113,6 +113,30 @@ func (t *transpiler) transpileExpr(tlExpr tlast.Expression) (goast.Expr, error) 
 	case *tlast.Literal:
 		// Correct by grammar.
 		return &goast.BasicLit{Kind: token.INT, Value: tlExpr.Text()}, nil
+	case *tlast.Identifier:
+		return goast.NewIdent(tlExpr.Text()), nil
+	case *tlast.FunctionApplication:
+		v, err := t.transpileExpr(tlExpr.Callee())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		callee, ok := v.(*goast.FuncLit)
+		if !ok {
+			return nil, errors.Errorf("invalid callee type; expected *ast.FuncLit, got %T", v)
+		}
+		var args []goast.Expr
+		for _, tlExpr := range tlExpr.Arguments() {
+			arg, err := t.transpileExpr(tlExpr)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			args = append(args, arg)
+		}
+		callExpr := &goast.CallExpr{
+			Fun:  callee,
+			Args: args,
+		}
+		return callExpr, nil
 	case *tlast.FunctionAbstraction:
 		params := tlExpr.Parameters()
 		body, err := t.transpileExpr(tlExpr.Body().Expression())
